@@ -1,28 +1,15 @@
-import { generateEmail } from "../utils/geminiClient.js";
-import { generateEmailWithRAG } from "../utils/ragClient.js";
+import { generateEmailWithTemplate } from "../utils/templateClient.js";
 
-// Old: Context-Aware
-export const createEmail = async (req, res) => {
+// Template + Tone
+export const createEmailWithTemplate = async (req, res) => {
   try {
-    const { prompt } = req.body;
+    const { prompt, tone } = req.body;
     if (!prompt) return res.status(400).json({ error: "Prompt is required" });
 
-    const emailText = await generateEmail(prompt);
+    const emailText = await generateEmailWithTemplate(prompt, tone);
     res.json({ email: emailText });
   } catch (error) {
-    res.status(500).json({ error: "Failed to generate email" });
-  }
-};
-
-// New: RAG
-export const createEmailWithRAG = async (req, res) => {
-  try {
-    const { prompt } = req.body;
-    if (!prompt) return res.status(400).json({ error: "Prompt is required" });
-
-    const emailText = await generateEmailWithRAG(prompt);
-    res.json({ email: emailText });
-  } catch (error) {
-    res.status(500).json({ error: "Failed to generate email with RAG" });
+    console.error(error);
+    res.status(500).json({ error: "Failed to generate email with template" });
   }
 };
