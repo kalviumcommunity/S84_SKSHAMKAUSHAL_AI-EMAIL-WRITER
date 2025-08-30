@@ -7,6 +7,7 @@ import historyRoutes from "./routes/historyRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import structuredRoutes from "./routes/structuredRoutes.js";
 import stopRoutes from "./routes/stopRoutes.js";
+import tokensRoutes from "./routes/tokensRoutes.js";
 
 dotenv.config();
 await connectDB(); // top-level await if node supports it; otherwise call inside async IIFE
@@ -19,6 +20,7 @@ app.use("/api/stop", stopRoutes);
 app.use("/api/emails", emailRoutes);
 app.use("/api/history", historyRoutes);
 app.use("/api/structured-emails", structuredRoutes);
+app.use("/api/tokens", tokensRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`✅ Backend running at http://localhost:${PORT}`));
