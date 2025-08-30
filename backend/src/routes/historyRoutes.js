@@ -6,6 +6,9 @@ import {
   deleteEmail,
 } from "../controllers/historyController.js";
 
+import { authMiddleware } from "../utils/auth.js";
+router.use(authMiddleware);
+
 const router = express.Router();
 
 router.post("/save", saveEmail);
