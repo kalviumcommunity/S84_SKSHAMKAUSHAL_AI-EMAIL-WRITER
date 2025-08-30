@@ -2,6 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import EmailEditor from "./pages/EmailEditor";
+import EmailHistory from "./pages/EmailHistory";
 
 function App() {
   const [prompt, setPrompt] = useState("");
@@ -17,9 +18,11 @@ function App() {
   return (
     <Router>
       <div className="p-6 max-w-xl mx-auto">
+        {/* ✅ Navbar */}
         <nav className="mb-4 flex gap-4">
           <Link to="/" className="text-blue-600">Home</Link>
           <Link to="/edit/123" className="text-blue-600">Test Editor</Link>
+          <Link to="/history" className="text-blue-600">History</Link>
         </nav>
 
         <Routes>
@@ -54,6 +57,9 @@ function App() {
 
           {/* Editor page → for editing saved/generated emails */}
           <Route path="/edit/:id" element={<EmailEditor />} />
+
+          {/* History page → shows past generated emails */}
+          <Route path="/history" element={<EmailHistory />} />
         </Routes>
       </div>
     </Router>

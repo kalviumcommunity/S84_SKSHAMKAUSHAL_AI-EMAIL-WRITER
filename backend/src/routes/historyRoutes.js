@@ -1,19 +1,18 @@
+// backend/routes/historyRoutes.js
 import express from "express";
-import {
-  saveEmail,
-  listEmails,
-  getEmail,
-  deleteEmail,
-} from "../controllers/historyController.js";
-
-import { authMiddleware } from "../utils/auth.js";
-router.use(authMiddleware);
+import authMiddleware from "../middleware/authMiddleware.js"; 
+import Email from "../models/Email.js";  // assuming you save emails in DB
 
 const router = express.Router();
 
-router.post("/save", saveEmail);
-router.get("/", listEmails);
-router.get("/:id", getEmail);
-router.delete("/:id", deleteEmail);
+// GET /api/history → get logged-in user's history
+router.get("/", authMiddleware, async (req, res) => {
+  try {
+    const emails = await Email.find({ user: req.user.id }).sort({ createdAt: -1 });
+    res.json(emails);
+  } catch (err) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
 
 export default router;

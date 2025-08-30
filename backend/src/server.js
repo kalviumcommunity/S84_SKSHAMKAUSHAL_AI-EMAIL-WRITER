@@ -6,7 +6,6 @@ import emailRoutes from "./routes/emailRoutes.js";
 import historyRoutes from "./routes/historyRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 
-
 dotenv.config();
 await connectDB(); // top-level await if node supports it; otherwise call inside async IIFE
 

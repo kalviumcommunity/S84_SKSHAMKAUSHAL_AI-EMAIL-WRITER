@@ -1,27 +1,35 @@
+// controllers/emailController.js
 import Email from "../models/Email.js";
+import OpenAI from "openai";
 
-export const updateEmail = async (req, res) => {
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
+// POST /api/email/generate
+export const generateEmail = async (req, res) => {
   try {
-    const { id } = req.params;
-    const { updatedText } = req.body;
+    const { prompt } = req.body;
 
-    if (!updatedText) {
-      return res.status(400).json({ error: "Updated text is required" });
-    }
+    // ✅ Call OpenAI
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [{ role: "user", content: `Write a professional email: ${prompt}` }],
+    });
 
-    const email = await Email.findOneAndUpdate(
-      { _id: id, userId: req.user.id }, // ✅ ensures only owner can edit
-      { email: updatedText },
-      { new: true }
-    );
+    const generatedText = completion.choices[0].message.content;
 
-    if (!email) {
-      return res.status(404).json({ error: "Email not found or unauthorized" });
-    }
+    // ✅ Save generated email to DB with logged-in user
+    const newEmail = new Email({
+      user: req.user.id,   // comes from auth middleware
+      body: generatedText,
+    });
 
-    res.json(email);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Failed to update email" });
+    await newEmail.save();
+
+    res.json({ body: generatedText });
+  } catch (err) {
+    console.error("❌ Error generating email:", err);
+    res.status(500).json({ error: "Failed to generate email" });
   }
 };
