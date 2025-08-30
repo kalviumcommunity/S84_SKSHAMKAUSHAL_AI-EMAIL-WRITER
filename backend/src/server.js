@@ -4,6 +4,8 @@ import dotenv from "dotenv";
 import connectDB from "./config/db.js";
 import emailRoutes from "./routes/emailRoutes.js";
 import historyRoutes from "./routes/historyRoutes.js";
+import authRoutes from "./routes/authRoutes.js";
+
 
 dotenv.config();
 await connectDB(); // top-level await if node supports it; otherwise call inside async IIFE
@@ -11,7 +13,7 @@ await connectDB(); // top-level await if node supports it; otherwise call inside
 const app = express();
 app.use(cors());
 app.use(express.json());
-
+app.use("/api/auth", authRoutes);
 app.use("/api/emails", emailRoutes);
 app.use("/api/history", historyRoutes);
 
