@@ -1,15 +1,27 @@
-import { generateEmailWithTemplate } from "../utils/templateClient.js";
+import Email from "../models/Email.js";
 
-// Template + Tone
-export const createEmailWithTemplate = async (req, res) => {
+export const updateEmail = async (req, res) => {
   try {
-    const { prompt, tone } = req.body;
-    if (!prompt) return res.status(400).json({ error: "Prompt is required" });
+    const { id } = req.params;
+    const { updatedText } = req.body;
 
-    const emailText = await generateEmailWithTemplate(prompt, tone);
-    res.json({ email: emailText });
+    if (!updatedText) {
+      return res.status(400).json({ error: "Updated text is required" });
+    }
+
+    const email = await Email.findOneAndUpdate(
+      { _id: id, userId: req.user.id }, // ✅ ensures only owner can edit
+      { email: updatedText },
+      { new: true }
+    );
+
+    if (!email) {
+      return res.status(404).json({ error: "Email not found or unauthorized" });
+    }
+
+    res.json(email);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Failed to generate email with template" });
+    res.status(500).json({ error: "Failed to update email" });
   }
 };
